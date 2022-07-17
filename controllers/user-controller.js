@@ -39,20 +39,26 @@ const userController = {
     req.logout()
     res.redirect('/signin')
   },
-  getUser: async (req, res, next) => { // go to Profile page
+  getUser: async (req, res, next) => { // go to Profile.hbs by user_id
     try {
-      const user = await User.findByPk(req.params.user_id,
+      const queryUser = await User.findByPk(req.params.user_id,
         {
           include: [
-            { model: Comment, include: [Restaurant] }
+            { model: Comment, include: [Restaurant] },
+            { model: User, as: 'Followings' },
+            { model: User, as: 'Followers' },
+            { model: Restaurant, as: 'FavoritedRestaurants' }
           ],
           nest: true
         }
       )
-      if (!user) throw new Error("User didn't exist!") // didnot find a user
+      if (!queryUser) throw new Error("User didn't exist!") // didnot find a user
+
+      const currentUser = req.user
+      const isFollowed = currentUser.Followings.some(u => u.id === queryUser.id)
 
       return res.render('users/profile',
-        { user: user.toJSON() }
+        { queryUser: queryUser.toJSON(), isFollowed }
       )
     } catch (error) {
       next(error)

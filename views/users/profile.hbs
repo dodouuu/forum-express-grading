@@ -1,33 +1,133 @@
-<div class="row mb-5">
-  <div class="col-md-4">
-    <img src="{{user.image}}" alt="photo" class="w-100">
+<div class="container">
+  {{!-- UserProfileCard --}}
+  <div class="card mb-3">
+    <div class="row">
+      <div class="col-md-4">
+        {{#if queryUser.image}}
+        <img src="{{queryUser.image}}" alt="photo" class="w-100" />
+        {{else}}
+        <img src="/thor-love-thunder.jpg" class="w-100" />
+        {{/if}}
+      </div>
+
+      <div class="col-md-8">
+        <div class="card-body">
+          <h1 class="card-title">{{queryUser.name}}</h1>
+          <div class="card-text mb-3">{{queryUser.email}}</div>
+          <ul class="list-unstyled">
+            <li>
+              <strong>{{queryUser.Comments.length}}</strong> 已評論餐廳
+            </li>
+            <li>
+              <strong>{{queryUser.FavoritedRestaurants.length}}</strong> 收藏的餐廳
+            </li>
+            <li>
+              <strong>{{queryUser.Followings.length}}</strong> followings (追蹤者)
+            </li>
+            <li>
+              <strong>{{queryUser.Followers.length}}</strong> followers (追隨者)
+            </li>
+          </ul>
+
+          {{#ifCond user.id queryUser.id}}
+          <div>
+            <a href="/users/{{queryUser.id}}/edit" class="btn btn-primary">edit</a>
+          </div>
+          {{else}}
+          {{#if isFollowed}}
+          <form action="/following/{{queryUser.id}}?_method=DELETE" method="POST" style="display: contents;">
+            <button type="submit" class="btn btn-danger">取消追蹤</button>
+          </form>
+          {{else}}
+          <form action="/following/{{queryUser.id}}" method="POST" style="display: contents;">
+            <button type="submit" class="btn btn-primary">追蹤</button>
+          </form>
+          {{/if}}
+          {{/ifCond}}
+
+        </div>
+      </div>
+
+    </div>
+  </div> {{!-- end class="card mb-3" --}}
+
+  <div class="row">
+    <div class="col-md-4">
+      {{!-- UserFollowingsCard --}}
+      <div class="card mb-4">
+        <div class="card-header ">
+          <strong>{{queryUser.Followings.length}}</strong> followings (追蹤者)
+        </div>
+        <div class="card-body p-2">
+          {{#each queryUser.Followings}}
+          <a href="/users/{{this.id}}">
+            {{#if this.image}}
+            <img src="{{this.image}}" style="max-width: 3vw" class="me-1 mb-2">
+            {{else}}
+            <img src="/thor-love-thunder.jpg" style="max-width: 3vw" class="me-1 mb-2">
+            {{/if}}
+          </a>
+          {{/each}}
+        </div>
+      </div>
+
+      {{!-- UserFollowersCard --}}
+      <div class="card">
+        <div class="card-header ">
+          <strong>{{queryUser.Followers.length}}</strong> followers (追隨者)
+        </div>
+        <div class="card-body p-2">
+          {{#each queryUser.Followers}}
+          <a href="/users/{{this.id}}">
+            {{#if this.image}}
+            <img src="{{this.image}}" style="max-width: 3vw" class="me-1 mb-2">
+            {{else}}
+            <img src="/thor-love-thunder.jpg" style="max-width: 3vw" class="me-1 mb-2">
+            {{/if}}
+          </a>
+          {{/each}}
+        </div>
+      </div>
+
+    </div>
+    <div class="col-md-8">
+      {{!-- UserCommentsCard --}}
+      <div class="card mb-4">
+        <div class="card-header ">
+          <strong>{{queryUser.Comments.length}}</strong> 已評論餐廳
+        </div>
+        <div class="card-body p-2">
+          {{#each queryUser.Comments}}
+          <a href="/restaurants/{{this.Restaurant.id}}">
+            {{#if this.Restaurant.image}}
+            <img src="{{this.Restaurant.image}}" style="max-width: 3vw" class="me-1 mb-2">
+            {{else}}
+            <img src="/thor-love-thunder.jpg" style="max-width: 3vw" class="me-1 mb-2">
+            {{/if}}
+          </a>
+          {{/each}}
+        </div>
+      </div>
+
+      {{!-- UserFavoritedRestaurantsCard --}}
+      <div class="card">
+        <div class="card-header ">
+          <strong>{{queryUser.FavoritedRestaurants.length}}</strong> 收藏的餐廳
+        </div>
+        <div class="card-body p-2">
+          {{#each queryUser.FavoritedRestaurants}}
+          <a href="/restaurants/{{this.id}}">
+            {{#if this.image}}
+            <img src="{{this.image}}" style="max-width: 3vw" class="me-1 mb-2">
+            {{else}}
+            <img src="/thor-love-thunder.jpg" style="max-width: 3vw" class="me-1 mb-2">
+            {{/if}}
+          </a>
+          {{/each}}
+        </div>
+      </div>
+
+    </div>
   </div>
 
-  <div class="col-md-8 d-flex flex-column">
-    <h1 class="mb-3">{{user.name}}</h1>
-    <div class="mb-3">{{user.email}}</div>
-    <div class="mb-auto">
-      {{user.Comments.length}} 已評論餐廳
-    </div>
-    <div>
-      <a href="/users/{{user.id}}/edit" class="btn btn-primary">edit</a>
-    </div>
-  </div>
-
-</div>
-<div class="row mb-5">
-  <div class="col-md-12">
-    <div class="card">
-      <div class="card-header">
-        {{user.Comments.length}} 已評論餐廳
-      </div>
-      <div class="card-body p-4">
-        {{#each user.Comments}}
-        <a href="/restaurants/{{this.Restaurant.id}}">
-          <img src="{{this.Restaurant.image}}" style="max-width: 5%" class="me-3">
-        </a>
-        {{/each}}
-      </div>
-    </div>
-  </div>
 </div>

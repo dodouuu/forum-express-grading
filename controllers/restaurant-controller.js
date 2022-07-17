@@ -144,7 +144,6 @@ const restaurantController = {
       const rests = await Restaurant.findAll({
         include: [{ model: User, as: 'FavoritedUsers' }]
       })
-      // console.log('rests', rests)
       const result = rests
         .map(rest => ({
           ...rest.toJSON(),
@@ -153,7 +152,6 @@ const restaurantController = {
         }))
         .sort((a, b) => b.favoritedCount - a.favoritedCount)
         .slice(0, 10)
-      // console.log('result=', result)
       return res.render('top-restaurants', { restaurants: result })
     } catch (error) {
       next(error)
