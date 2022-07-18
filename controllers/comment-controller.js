@@ -21,7 +21,6 @@ const commentController = {
         userId
       })
 
-      await user.increment('commentCounts', { by: 1 })
       req.flash('success_messages', 'postComment successfully')
 
       return res.redirect(`/restaurants/${restaurantId}`)
@@ -40,7 +39,6 @@ const commentController = {
       if (!comment) throw new Error("Comment didn't exist!'")
       const deletedComment = await comment.destroy()
 
-      await comment.User.decrement('commentCounts', { by: 1 })
       req.flash('error_messages', 'deleteComment successfully')
 
       return res.redirect(`/restaurants/${deletedComment.restaurantId}`)

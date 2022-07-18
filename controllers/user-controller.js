@@ -53,12 +53,11 @@ const userController = {
         }
       )
       if (!queryUser) throw new Error("User didn't exist!") // didnot find a user
-
       const currentUser = req.user
       const isFollowed = currentUser.Followings.some(u => u.id === queryUser.id)
 
       return res.render('users/profile',
-        { queryUser: queryUser.toJSON(), isFollowed }
+        { queryUser: queryUser.dataValues, isFollowed }
       )
     } catch (error) {
       next(error)
