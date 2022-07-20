@@ -31,7 +31,7 @@ const restaurantServices = {
 
       const data = restaurants.rows.map(r => ({
         ...r,
-        description: r.description.substring(0, 50), // show only first 50 characters
+        description: r.description ? r.description.substring(0, 50) : '', // show only first 50 characters
         isFavorited: favoritedRestaurantsId.includes(r.id), // if (r.id in favoritedRestaurantsId) => true
         isLiked: likedRestaurantsId.includes(r.id) // if (r.id in likedRestaurantsId) => true
       }))

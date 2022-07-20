@@ -23,6 +23,7 @@ app.engine('hbs', handlebars({
 }))
 app.set('view engine', 'hbs')
 app.use(express.urlencoded({ extended: true })) // body-parser
+app.use(express.json()) // 啟用 Express 的 JSON 功能
 
 app.use(session({ secret: SESSION_SECRET, resave: false, saveUninitialized: false }))
 app.use(passport.initialize())
