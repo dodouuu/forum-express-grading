@@ -11,7 +11,7 @@ const passport = require('./config/passport')
 const { getUser } = require('./helpers/auth-helpers')
 const handlebarsHelpers = require('./helpers/handlebars-helpers')
 
-const { pages } = require('./routes')
+const { pages, apis } = require('./routes')
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -42,6 +42,7 @@ app.use((req, res, next) => {
   next()
 })
 
+app.use('/api', apis)
 app.use(pages)
 
 app.listen(port, () => {

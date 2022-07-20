@@ -27,7 +27,7 @@ const restaurantController = {
       ])
       const favoritedRestaurantsId = req.user && req.user.FavoritedRestaurants.map(fr => fr.id)
 
-      const likedRestaurantsId = req.user && req.user.LikedRestaurants.map(fr => fr.id)
+      const likedRestaurantsId = req.user && req.user.LikedRestaurants.map(lr => lr.id)
 
       const data = restaurants.rows.map(r => ({
         ...r,
