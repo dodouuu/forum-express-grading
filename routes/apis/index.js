@@ -11,10 +11,11 @@ const admin = require('./modules/admin')
 
 router.use('/admin', authenticated, authenticatedAdmin, admin)
 
-router.get('/restaurants', authenticated, restController.getRestaurants)
+router.get('/restaurants', authenticated, restController.getRestaurants) // render all restaurants
 
 router.post('/signup', userController.signUp) // create new user into database
 router.post('/signin', passport.authenticate('local', { session: false }), userController.signIn) // disable sessions
+router.get('/users/top', authenticated, userController.getTopUsers) // get top-users
 
 router.use('/', apiErrorHandler)
 module.exports = router

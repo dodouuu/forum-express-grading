@@ -24,6 +24,25 @@ const userServices = {
     } catch (error) {
       return callback(error)
     }
+  },
+  getTopUsers: async (req, callback) => {
+    try {
+      // get every user and her followers
+      const users = await User.findAll({
+        include: [{ model: User, as: 'Followers' }]
+      })
+      // result is a sorted array include two new properties: followerCount, isFollowed
+      const result = users
+        .map(user => ({
+          ...user.toJSON(),
+          followerCount: user.Followers.length,
+          isFollowed: req.user.Followings.some(f => f.id === user.id) // if this user followed by req.user ?
+        }))
+        .sort((a, b) => b.followerCount - a.followerCount)
+      return callback(null, { users: result })
+    } catch (error) {
+      return callback(error)
+    }
   }
 }
 module.exports = userServices

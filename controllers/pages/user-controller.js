@@ -213,24 +213,11 @@ const userController = {
       next(error)
     }
   },
-  getTopUsers: async (req, res, next) => {
-    try {
-      // get every user and her followers
-      const users = await User.findAll({
-        include: [{ model: User, as: 'Followers' }]
-      })
-      // result is a sorted array include two new properties: followerCount, isFollowed
-      const result = users
-        .map(user => ({
-          ...user.toJSON(),
-          followerCount: user.Followers.length,
-          isFollowed: req.user.Followings.some(f => f.id === user.id) // if this user followed by req.user ?
-        }))
-        .sort((a, b) => b.followerCount - a.followerCount)
-      return res.render('top-users', { users: result })
-    } catch (error) {
-      next(error)
-    }
+  getTopUsers: (req, res, next) => {
+    userServices.getTopUsers(req, (err, data) => {
+      if (err) return next(err)
+      res.render('top-users', data)
+    })
   }
 }
 
