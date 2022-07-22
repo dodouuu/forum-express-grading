@@ -16,6 +16,7 @@ router.get('/restaurants', authenticated, restController.getRestaurants) // rend
 router.post('/signup', userController.signUp) // create new user into database
 router.post('/signin', passport.authenticate('local', { session: false }), userController.signIn) // disable sessions
 router.get('/users/top', authenticated, userController.getTopUsers) // get top-users
+router.get('/users/:user_id/edit', authenticated, userController.editUser) // get user's data for Profile edit page
 
 router.use('/', apiErrorHandler)
 module.exports = router

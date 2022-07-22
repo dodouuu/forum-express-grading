@@ -26,6 +26,12 @@ const userController = {
       if (err) return next(err)
       res.json({ status: 'success', data })
     })
+  },
+  editUser: (req, res, next) => { // get user's data for Profile edit page
+    userServices.editUser(req, (err, data) => {
+      if (err) return next(err)
+      res.json({ status: 'success', data })
+    })
   }
 }
 module.exports = userController

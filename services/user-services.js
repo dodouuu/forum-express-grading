@@ -43,6 +43,14 @@ const userServices = {
     } catch (error) {
       return callback(error)
     }
+  },
+  editUser: async (req, callback) => { // go to Profile edit page
+    try {
+      const user = await User.findByPk(req.params.user_id)
+      return callback(null, { user: user.dataValues })
+    } catch (error) {
+      return callback(error)
+    }
   }
 }
 module.exports = userServices

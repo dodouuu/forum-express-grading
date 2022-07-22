@@ -49,13 +49,11 @@ const userController = {
       next(error)
     }
   },
-  editUser: async (req, res, next) => { // go to Profile edit page
-    try {
-      const user = await User.findByPk(req.params.user_id)
-      res.render('users/edit', { user: user.toJSON() })
-    } catch (error) {
-      next(error)
-    }
+  editUser: (req, res, next) => { // go to Profile edit page
+    userServices.editUser(req, (err, data) => {
+      if (err) return next(err)
+      res.render('users/edit', data)
+    })
   },
   putUser: async (req, res, next) => { // update Profile
     try {
