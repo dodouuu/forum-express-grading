@@ -1,7 +1,11 @@
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
+const passportJWT = require('passport-jwt')
 const bcrypt = require('bcryptjs')
 const { User, Restaurant } = require('../models')
+
+const JWTStrategy = passportJWT.Strategy
+const ExtractJWT = passportJWT.ExtractJwt
 
 // set LocalStrategy
 const customFields = {
@@ -19,6 +23,29 @@ const verifyCallback = async (req, email, password, cb) => {
 }
 const localStrategy = new LocalStrategy(customFields, verifyCallback)
 passport.use(localStrategy)
+
+// set JWT - new JwtStrategy(options, verify)
+const jwtOptions = {
+  jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(), // 這個選項是設定去哪裡找 token，這裡指定了 authorization header 裡的 bearer token
+  secretOrKey: process.env.JWT_SECRET // 使用密鑰來檢查 token 是否經過纂改，也就是我們放進 process.env.JWT_SECRET 的 'alphacamp' 字串，這組密鑰只有伺服器知道
+}
+const jwtVerifyCallback = async (jwtPayload, cb) => {
+  try {
+    const user = await User.findByPk(jwtPayload.id, {
+      include: [
+        { model: Restaurant, as: 'FavoritedRestaurants' },
+        { model: Restaurant, as: 'LikedRestaurants' },
+        { model: User, as: 'Followers' },
+        { model: User, as: 'Followings' }
+      ]
+    })
+    return cb(null, user)
+  } catch (error) {
+    return cb(error)
+  }
+}
+const jwtStrategy = new JWTStrategy(jwtOptions, jwtVerifyCallback)
+passport.use(jwtStrategy)
 
 // serialize and deserialize user
 passport.serializeUser((user, cb) => {
