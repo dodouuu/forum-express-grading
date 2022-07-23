@@ -10,26 +10,14 @@ const categoryController = {
       }
     })
   },
-  putCategory: async (req, res, next) => { // update a category into database
-    try {
-      const name = req.body.name.trim()
-
-      if (!name) throw new Error('Category name is required!')
-
-      let category = await Category.findOne(
-        { where: { name: name } }
-      )
-      if (category !== null) {
-        throw new Error('Category name exists!')
-      } else {
-        category = await Category.findByPk(req.params.cat_id)
-        await category.update({ name })
+  putCategory: (req, res, next) => { // update a category into database
+    categoryServices.putCategory(req, (err, data) => {
+      if (err) return next(err)
+      else {
         req.flash('success_messages', 'category update successfully')
-        return res.redirect('/admin/categories')
+        res.redirect('/admin/categories', data)
       }
-    } catch (error) {
-      next(error)
-    }
+    })
   },
   postCategory: async (req, res, next) => { // create new category into database
     try {

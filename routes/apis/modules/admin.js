@@ -15,6 +15,8 @@ router.get('/restaurants', adminController.getRestaurants) // show all restauran
 router.patch('/users/:user_id', adminController.patchUser) // switch admin <=> user
 router.get('/users', adminController.getUsers) // show all users
 
-router.get('/categories', categoryController.getCategories) // show create page
+router.get('/categories/:cat_id', categoryController.getCategories) // show category edit page
+router.put('/categories/:cat_id', categoryController.putCategory) // update a category into database
+router.get('/categories', categoryController.getCategories) // show category create page
 
 module.exports = router
