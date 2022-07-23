@@ -9,6 +9,9 @@ const adminController = {
   },
   deleteRestaurant: (req, res, next) => {
     adminServices.deleteRestaurant(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
+  },
+  editRestaurant: (req, res, next) => { // get data for admin edit restaurant page
+    adminServices.editRestaurant(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   }
 }
 module.exports = adminController

@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 const passport = require('../../config/passport')
 const restController = require('../../controllers/pages/restaurant-controller')
-const admin = require('./modules/admin')
 const userController = require('../../controllers/pages/user-controller')
 const commentController = require('../../controllers/pages/comment-controller')
 
@@ -10,6 +9,7 @@ const { authenticated, authenticatedAdmin } = require('../../middleware/auth')
 const { generalErrorHandler } = require('../../middleware/error-handler')
 
 const upload = require('../../middleware/multer')
+const admin = require('./modules/admin')
 
 router.use('/admin', authenticatedAdmin, admin)
 

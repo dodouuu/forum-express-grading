@@ -10,7 +10,6 @@ const { authenticated, authenticatedAdmin } = require('../../middleware/api-auth
 const { apiErrorHandler } = require('../../middleware/error-handler')
 
 const upload = require('../../middleware/multer')
-
 const admin = require('./modules/admin')
 
 router.use('/admin', authenticated, authenticatedAdmin, admin)

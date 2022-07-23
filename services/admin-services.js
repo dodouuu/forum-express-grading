@@ -44,6 +44,18 @@ const adminServices = {
     } catch (error) {
       return callback(error)
     }
+  },
+  editRestaurant: async (req, callback) => { // go to edit restaurant page
+    try {
+      const [restaurant, categories] = await Promise.all([
+        Restaurant.findByPk(req.params.rest_id, { raw: true }),
+        Category.findAll({ raw: true })
+      ])
+      if (!restaurant) throw new Error("Restaurant doesn't exist!") // didn't find a restaurant
+      return callback(null, { restaurant, categories })
+    } catch (error) {
+      return callback(error)
+    }
   }
 }
 module.exports = adminServices

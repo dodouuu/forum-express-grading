@@ -59,16 +59,16 @@ const adminController = {
       res.redirect('/admin/restaurants', data)
     })
   },
+  deleteRestaurant: (req, res, next) => {
+    adminServices.deleteRestaurant(req, (err, data) => err ? next(err) : res.redirect('/admin/restaurants', data))
+  },
   editRestaurant: (req, res, next) => { // go to edit restaurant page
-    return Promise.all([
-      Restaurant.findByPk(req.params.rest_id, { raw: true }),
-      Category.findAll({ raw: true })
-    ])
-      .then(([restaurant, categories]) => {
-        if (!restaurant) throw new Error("Restaurant doesn't exist!") // didn't find a restaurant
-        res.render('admin/edit-restaurant', { restaurant, categories })
-      })
-      .catch(err => next(err))
+    adminServices.editRestaurant(req, (err, data) => {
+      if (err) return next(err)
+      else {
+        res.render('admin/edit-restaurant', data)
+      }
+    })
   },
   putRestaurant: (req, res, next) => { // update a restaurant
     const { name, tel, address, openingHours, description, categoryId } = req.body
@@ -96,9 +96,6 @@ const adminController = {
         res.redirect('/admin/restaurants')
       })
       .catch(err => next(err))
-  },
-  deleteRestaurant: (req, res, next) => {
-    adminServices.deleteRestaurant(req, (err, data) => err ? next(err) : res.redirect('/admin/restaurants', data))
   }
 }
 module.exports = adminController
