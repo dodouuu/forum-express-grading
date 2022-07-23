@@ -2,7 +2,7 @@ const { User, Category } = require('../../models')
 const adminServices = require('../../services/admin-services')
 
 const adminController = {
-  patchUser: async (req, res, next) => {
+  patchUser: (req, res, next) => {
     adminServices.patchUser(req, (err, data) => {
       if (err) return next(err)
       else {
@@ -11,15 +11,13 @@ const adminController = {
       }
     })
   },
-  getUsers: async (req, res, next) => {
-    try {
-      const users = await User.findAll({
-        raw: true
-      })
-      return res.render('admin/users', { users })
-    } catch (error) {
-      throw new Error('getUsers error')
-    }
+  getUsers: (req, res, next) => {
+    adminServices.getUsers(req, (err, data) => {
+      if (err) return next(err)
+      else {
+        res.render('admin/users', data)
+      }
+    })
   },
   getRestaurants: (req, res, next) => {
     adminServices.getRestaurants(req, (err, data) => err ? next(err) : res.render('admin/restaurants', data))

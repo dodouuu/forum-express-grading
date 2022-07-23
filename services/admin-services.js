@@ -16,6 +16,17 @@ const adminServices = {
       return callback(error)
     }
   },
+  getUsers: async (req, callback) => {
+    try {
+      const users = await User.findAll({
+        raw: true
+      })
+      // return res.render('admin/users', { users })
+      return callback(null, { users })
+    } catch (error) {
+      return callback(error)
+    }
+  },
   getRestaurants: async (req, callback) => {
     try {
       const restaurants = await Restaurant.findAll({
