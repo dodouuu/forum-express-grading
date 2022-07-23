@@ -17,6 +17,7 @@ router.post('/signup', userController.signUp) // create new user into database
 router.post('/signin', passport.authenticate('local', { session: false }), userController.signIn) // disable sessions
 router.get('/users/top', authenticated, userController.getTopUsers) // get top-users
 router.get('/users/:user_id/edit', authenticated, userController.editUser) // get user's data for Profile edit page
+router.get('/users/:user_id', authenticated, userController.getUser) // get user's data for Profile page
 
 router.use('/', apiErrorHandler)
 module.exports = router

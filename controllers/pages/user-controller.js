@@ -1,4 +1,4 @@
-const { User, Comment, Restaurant, Favorite, Like, Followship } = require('../../models')
+const { User, Restaurant, Favorite, Like, Followship } = require('../../models')
 const { imgurFileHandler } = require('../../helpers/file-helpers')
 const userServices = require('../../services/user-services')
 
@@ -25,34 +25,16 @@ const userController = {
     req.logout()
     res.redirect('/signin')
   },
-  getUser: async (req, res, next) => { // go to Profile.hbs by user_id
-    try {
-      const queryUser = await User.findByPk(req.params.user_id,
-        {
-          include: [
-            { model: Comment, include: [Restaurant] },
-            { model: User, as: 'Followings' },
-            { model: User, as: 'Followers' },
-            { model: Restaurant, as: 'FavoritedRestaurants' }
-          ],
-          nest: true
-        }
-      )
-      if (!queryUser) throw new Error("User didn't exist!") // didnot find a user
-      const currentUser = req.user
-      const isFollowed = currentUser.Followings.some(u => u.id === queryUser.id)
-
-      return res.render('users/profile',
-        { queryUser: queryUser.dataValues, isFollowed }
-      )
-    } catch (error) {
-      next(error)
-    }
+  getUser: (req, res, next) => { // go to Profile.hbs by user_id
+    userServices.getUser(req, (err, data) => {
+      if (err) return next(err)
+      else res.render('users/profile', data)
+    })
   },
   editUser: (req, res, next) => { // go to Profile edit page
     userServices.editUser(req, (err, data) => {
       if (err) return next(err)
-      res.render('users/edit', data)
+      else res.render('users/edit', data)
     })
   },
   putUser: async (req, res, next) => { // update Profile

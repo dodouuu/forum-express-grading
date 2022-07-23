@@ -24,7 +24,13 @@ const userController = {
   getTopUsers: (req, res, next) => {
     userServices.getTopUsers(req, (err, data) => {
       if (err) return next(err)
-      res.json({ status: 'success', data })
+      else res.json({ status: 'success', data })
+    })
+  },
+  getUser: (req, res, next) => { // get user's data for Profile page
+    userServices.getUser(req, (err, data) => {
+      if (err) return next(err)
+      else res.json({ status: 'success', data })
     })
   },
   editUser: (req, res, next) => { // get user's data for Profile edit page

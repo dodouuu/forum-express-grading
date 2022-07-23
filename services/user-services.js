@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs') // 載入 bcrypt
-const { User } = require('../models')
+const { User, Restaurant, Comment } = require('../models')
 
 const userServices = {
   signUp: async (req, callback) => {
@@ -40,6 +40,28 @@ const userServices = {
         }))
         .sort((a, b) => b.followerCount - a.followerCount)
       return callback(null, { users: result })
+    } catch (error) {
+      return callback(error)
+    }
+  },
+  getUser: async (req, callback) => { // go to Profile.hbs by user_id
+    try {
+      const queryUser = await User.findByPk(req.params.user_id,
+        {
+          include: [
+            { model: Comment, include: [Restaurant] },
+            { model: User, as: 'Followings' },
+            { model: User, as: 'Followers' },
+            { model: Restaurant, as: 'FavoritedRestaurants' }
+          ],
+          nest: true
+        }
+      )
+      if (!queryUser) throw new Error("User didn't exist!") // didnot find a user
+      const currentUser = req.user
+      const isFollowed = currentUser.Followings.some(u => u.id === queryUser.id)
+
+      return callback(null, { queryUser: queryUser.dataValues, isFollowed })
     } catch (error) {
       return callback(error)
     }
