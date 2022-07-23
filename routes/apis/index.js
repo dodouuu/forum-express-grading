@@ -7,6 +7,9 @@ const userController = require('../../controllers/apis/user-controller')
 
 const { authenticated, authenticatedAdmin } = require('../../middleware/api-auth')
 const { apiErrorHandler } = require('../../middleware/error-handler')
+
+const upload = require('../../middleware/multer')
+
 const admin = require('./modules/admin')
 
 router.use('/admin', authenticated, authenticatedAdmin, admin)
@@ -18,6 +21,7 @@ router.post('/signin', passport.authenticate('local', { session: false }), userC
 router.get('/users/top', authenticated, userController.getTopUsers) // get top-users
 router.get('/users/:user_id/edit', authenticated, userController.editUser) // get user's data for Profile edit page
 router.get('/users/:user_id', authenticated, userController.getUser) // get user's data for Profile page
+router.put('/users/:user_id', authenticated, upload.single('image'), userController.putUser) // update Profile
 
 router.use('/', apiErrorHandler)
 module.exports = router

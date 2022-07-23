@@ -37,29 +37,14 @@ const userController = {
       else res.render('users/edit', data)
     })
   },
-  putUser: async (req, res, next) => { // update Profile
-    try {
-      const name = req.body.name
-      const { file } = req // = const file = req.file
-
-      const [user, filePath] = await Promise.all(
-        [
-          User.findByPk(req.params.user_id),
-          imgurFileHandler(file)
-        ]
-      )
-
-      await user.update(
-        {
-          name,
-          image: filePath || user.image
-        }
-      )
-      req.flash('success_messages', '使用者資料編輯成功')
-      res.redirect(`/users/${user.id}`)
-    } catch (error) {
-      next(error)
-    }
+  putUser: (req, res, next) => { // update Profile
+    userServices.putUser(req, (err, data) => {
+      if (err) return next(err)
+      else {
+        req.flash('success_messages', '使用者資料編輯成功')
+        res.redirect(`/users/${data.user.id}`, data) // back to Profile page
+      }
+    })
   },
   addFavorite: async (req, res, next) => {
     try {

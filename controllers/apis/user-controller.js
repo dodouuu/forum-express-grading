@@ -38,6 +38,12 @@ const userController = {
       if (err) return next(err)
       res.json({ status: 'success', data })
     })
+  },
+  putUser: (req, res, next) => { // update Profile
+    userServices.putUser(req, (err, data) => {
+      if (err) return next(err)
+      res.json({ status: 'success', data })
+    })
   }
 }
 module.exports = userController

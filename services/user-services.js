@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs') // 載入 bcrypt
 const { User, Restaurant, Comment } = require('../models')
+const { imgurFileHandler } = require('../helpers/file-helpers')
 
 const userServices = {
   signUp: async (req, callback) => {
@@ -69,6 +70,29 @@ const userServices = {
   editUser: async (req, callback) => { // go to Profile edit page
     try {
       const user = await User.findByPk(req.params.user_id)
+      return callback(null, { user: user.dataValues })
+    } catch (error) {
+      return callback(error)
+    }
+  },
+  putUser: async (req, callback) => { // update Profile
+    try {
+      const name = req.body.name
+      const { file } = req // = const file = req.file
+
+      let [user, filePath] = await Promise.all(
+        [
+          User.findByPk(req.params.user_id),
+          imgurFileHandler(file)
+        ]
+      )
+
+      user = await user.update(
+        {
+          name,
+          image: filePath || user.image
+        }
+      )
       return callback(null, { user: user.dataValues })
     } catch (error) {
       return callback(error)
