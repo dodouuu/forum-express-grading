@@ -1,7 +1,21 @@
-const { Restaurant, Category } = require('../models')
+const { Restaurant, Category, User } = require('../models')
 const { imgurFileHandler } = require('../helpers/file-helpers')
 
 const adminServices = {
+  patchUser: async (req, callback) => {
+    try {
+      let user = await User.findByPk(req.params.user_id)
+      if (user.email === 'root@example.com') throw new Error('禁止變更 root 權限')
+
+      user = await user.update({
+        isAdmin: !user.isAdmin
+      })
+
+      return callback(null, { user })
+    } catch (error) {
+      return callback(error)
+    }
+  },
   getRestaurants: async (req, callback) => {
     try {
       const restaurants = await Restaurant.findAll({
@@ -99,7 +113,6 @@ const adminServices = {
     } catch (error) {
       return callback(error)
     }
-        // res.redirect('/admin/restaurants')
   }
 }
 module.exports = adminServices

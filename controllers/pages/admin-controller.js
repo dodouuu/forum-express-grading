@@ -1,24 +1,15 @@
-const { Restaurant, User, Category } = require('../../models')
-const { imgurFileHandler } = require('../../helpers/file-helpers')
+const { User, Category } = require('../../models')
 const adminServices = require('../../services/admin-services')
 
 const adminController = {
   patchUser: async (req, res, next) => {
-    try {
-      const user = await User.findByPk(req.params.user_id)
-      if (user.email !== 'root@example.com') {
-        await user.update({
-          isAdmin: !user.isAdmin
-        })
+    adminServices.patchUser(req, (err, data) => {
+      if (err) return next(err)
+      else {
         req.flash('success_messages', '使用者權限變更成功')
-        return res.redirect('/admin/users')
-      } else {
-        req.flash('error_messages', '禁止變更 root 權限')
-        return res.redirect('back')
+        res.redirect('/admin/users', data)
       }
-    } catch (error) {
-      throw new Error('patchUser error')
-    }
+    })
   },
   getUsers: async (req, res, next) => {
     try {
