@@ -35,6 +35,8 @@ router.post('/favorite/:restaurantId', authenticated, userController.addFavorite
 router.delete('/favorite/:restaurantId', authenticated, userController.removeFavorite) // remove a restaurant from join table
 router.post('/like/:restaurantId', authenticated, userController.addLike) // add a restaurant into join table
 router.delete('/like/:restaurantId', authenticated, userController.removeLike) // remove a restaurant from join table
+router.post('/following/:userId', authenticated, userController.addFollowing) // add a following into followship table
+router.delete('/following/:userId', authenticated, userController.removeFollowing) // remove a following from followship table
 
 router.use('/', apiErrorHandler)
 module.exports = router

@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs') // 載入 bcrypt
-const { User, Restaurant, Comment, Favorite, Like } = require('../models')
+const { User, Restaurant, Comment, Favorite, Like, Followship } = require('../models')
 const { imgurFileHandler } = require('../helpers/file-helpers')
 
 const userServices = {
@@ -183,6 +183,52 @@ const userServices = {
 
       await like.destroy()
       return callback(null, { userId, restaurantId })
+    } catch (error) {
+      return callback(error)
+    }
+  },
+  addFollowing: async (req, callback) => {
+    try {
+      const followerId = req.user.id
+      const followingId = req.params.userId
+      const [user, followship] = await Promise.all([
+        User.findByPk(followingId),
+        Followship.findOne({
+          where: {
+            followerId,
+            followingId
+          }
+        })
+      ])
+
+      if (!user) throw new Error("User didn't exist!")
+      if (followship) throw new Error('You are already following this user!')
+
+      await Followship.create({
+        followerId,
+        followingId
+      })
+
+      return callback(null, { followerId, followingId })
+    } catch (error) {
+      return callback(error)
+    }
+  },
+  removeFollowing: async (req, callback) => {
+    try {
+      const followerId = req.user.id
+      const followingId = req.params.userId
+      const followship = await Followship.findOne({
+        where: {
+          followerId,
+          followingId
+        }
+      })
+      if (!followship) throw new Error("You haven't followed this user!")
+
+      await followship.destroy()
+
+      return callback(null, { followerId, followingId })
     } catch (error) {
       return callback(error)
     }

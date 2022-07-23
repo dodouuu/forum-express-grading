@@ -1,4 +1,3 @@
-const { User, Followship } = require('../../models')
 const userServices = require('../../services/user-services')
 
 const userController = {
@@ -81,49 +80,23 @@ const userController = {
       }
     })
   },
-  addFollowing: async (req, res, next) => {
-    try {
-      const { userId } = req.params
-      const [user, followship] = await Promise.all([
-        User.findByPk(userId),
-        Followship.findOne({
-          where: {
-            followerId: req.user.id,
-            followingId: userId
-          }
-        })
-      ])
-
-      if (!user) throw new Error("User didn't exist!")
-      if (followship) throw new Error('You are already following this user!')
-
-      await Followship.create({
-        followerId: req.user.id,
-        followingId: userId
-      })
-      req.flash('success_messages', 'addFollowing successfully')
-      return res.redirect('back')
-    } catch (error) {
-      next(error)
-    }
+  addFollowing: (req, res, next) => {
+    userServices.addFollowing(req, (err, data) => {
+      if (err) return next(err)
+      else {
+        req.flash('success_messages', 'addFollowing successfully')
+        res.redirect('back', data)
+      }
+    })
   },
-  removeFollowing: async (req, res, next) => {
-    try {
-      const followship = await Followship.findOne({
-        where: {
-          followerId: req.user.id,
-          followingId: req.params.userId
-        }
-      })
-      if (!followship) throw new Error("You haven't followed this user!")
-
-      await followship.destroy()
-      req.flash('error_messages', 'removeFollowing successfully')
-
-      return res.redirect('back')
-    } catch (error) {
-      next(error)
-    }
+  removeFollowing: (req, res, next) => {
+    userServices.removeFollowing(req, (err, data) => {
+      if (err) return next(err)
+      else {
+        req.flash('error_messages', 'removeFollowing successfully')
+        res.redirect('back', data)
+      }
+    })
   },
   getTopUsers: (req, res, next) => {
     userServices.getTopUsers(req, (err, data) => {
