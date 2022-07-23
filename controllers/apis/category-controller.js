@@ -6,6 +6,9 @@ const categoryController = {
   },
   putCategory: (req, res, next) => { // update a category into database
     categoryServices.putCategory(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
+  },
+  postCategory: (req, res, next) => { // create new category into database
+    categoryServices.postCategory(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   }
 }
 module.exports = categoryController

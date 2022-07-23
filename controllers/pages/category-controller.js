@@ -19,24 +19,14 @@ const categoryController = {
       }
     })
   },
-  postCategory: async (req, res, next) => { // create new category into database
-    try {
-      const name = req.body.name.trim()
-
-      if (!name) throw new Error('Category name is required!')
-      const category = await Category.findOne(
-        { where: { name: name } }
-      )
-      if (category !== null) {
-        throw new Error('Category name exists!')
-      } else { // category === null
-        await Category.create({ name })
+  postCategory: (req, res, next) => { // create new category into database
+    categoryServices.postCategory(req, (err, data) => {
+      if (err) return next(err)
+      else {
         req.flash('success_messages', 'category create successfully')
-        return res.redirect('/admin/categories')
+        res.redirect('/admin/categories', data)
       }
-    } catch (error) {
-      next(error)
-    }
+    })
   },
   deleteCategory: async (req, res, next) => { // delete a category from database
     try {

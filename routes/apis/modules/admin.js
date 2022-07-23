@@ -18,5 +18,6 @@ router.get('/users', adminController.getUsers) // show all users
 router.get('/categories/:cat_id', categoryController.getCategories) // show category edit page
 router.put('/categories/:cat_id', categoryController.putCategory) // update a category into database
 router.get('/categories', categoryController.getCategories) // show category create page
+router.post('/categories', categoryController.postCategory) // create new category into database
 
 module.exports = router
