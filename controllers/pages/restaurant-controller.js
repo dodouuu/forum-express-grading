@@ -70,34 +70,13 @@ const restaurantController = {
       next(error)
     }
   },
-  getFeeds: async (req, res, next) => { // render top 10 feeds
-    try {
-      const [restaurants, comments] = await Promise.all(
-        [
-          Restaurant.findAll({
-            limit: 10,
-            order: [['createdAt', 'DESC']],
-            include: [Category],
-            raw: true,
-            nest: true
-          }),
-          Comment.findAll({
-            limit: 10,
-            order: [['createdAt', 'DESC']],
-            include: [User, Restaurant],
-            raw: true,
-            nest: true
-          })
-        ]
-      )
-
-      return res.render('feeds', {
-        restaurants,
-        comments
-      })
-    } catch (error) {
-      next(error)
-    }
+  getFeeds: (req, res, next) => { // render top 10 feeds
+    restaurantServices.getFeeds(req, (err, data) => {
+      if (err) return next(err)
+      else {
+        res.render('feeds', data)
+      }
+    })
   },
   getTopRestaurants: (req, res, next) => { // render most favorited top 10 restaurants
     restaurantServices.getTopRestaurants(req, (err, data) => {

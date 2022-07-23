@@ -1,4 +1,4 @@
-const { Restaurant, Category, User } = require('../models')
+const { Restaurant, Category, User, Comment } = require('../models')
 const { getOffset, getPagination } = require('../helpers/pagination-helper')
 
 const restaurantServices = {
@@ -42,6 +42,38 @@ const restaurantServices = {
           categories,
           categoryId,
           pagination: getPagination(limit, page, restaurants.count)
+        }
+      )
+    } catch (error) {
+      return callback(error)
+    }
+  },
+  getFeeds: async (req, callback) => { // render top 10 feeds
+    try {
+      const [restaurants, comments] = await Promise.all(
+        [
+          Restaurant.findAll({
+            limit: 10,
+            order: [['createdAt', 'DESC']],
+            include: [Category],
+            raw: true,
+            nest: true
+          }),
+          Comment.findAll({
+            limit: 10,
+            order: [['createdAt', 'DESC']],
+            include: [User, Restaurant],
+            raw: true,
+            nest: true
+          })
+        ]
+      )
+
+      return callback(
+        null,
+        {
+          restaurants,
+          comments
         }
       )
     } catch (error) {
