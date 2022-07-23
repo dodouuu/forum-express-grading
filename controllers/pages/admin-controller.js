@@ -1,4 +1,4 @@
-const { User, Category } = require('../../models')
+const { Category } = require('../../models')
 const adminServices = require('../../services/admin-services')
 
 const adminController = {

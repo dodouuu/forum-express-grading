@@ -1,7 +1,7 @@
 const adminServices = require('../../services/admin-services')
 
 const adminController = {
-  patchUser: async (req, res, next) => {
+  patchUser: (req, res, next) => {
     adminServices.patchUser(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   },
   getUsers: (req, res, next) => {
