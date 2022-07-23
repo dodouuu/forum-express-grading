@@ -45,49 +45,23 @@ const userController = {
       }
     })
   },
-  addFavorite: async (req, res, next) => {
-    try {
-      const { restaurantId } = req.params
-      const [restaurant, favorite] = await Promise.all([
-        Restaurant.findByPk(restaurantId),
-        Favorite.findOne({
-          where: {
-            userId: req.user.id,
-            restaurantId
-          }
-        })
-      ])
-
-      if (!restaurant) throw new Error("Restaurant didn't exist!")
-      if (favorite) throw new Error('You have favorited this restaurant!')
-
-      await Favorite.create({
-        userId: req.user.id,
-        restaurantId
-      })
-      req.flash('success_messages', 'addFavorite successfully')
-      return res.redirect('back')
-    } catch (error) {
-      next(error)
-    }
+  addFavorite: (req, res, next) => {
+    userServices.addFavorite(req, (err, data) => {
+      if (err) return next(err)
+      else {
+        req.flash('success_messages', 'addFavorite successfully')
+        res.redirect('back', data)
+      }
+    })
   },
-  removeFavorite: async (req, res, next) => {
-    try {
-      const favorite = await Favorite.findOne({
-        where: {
-          userId: req.user.id,
-          restaurantId: req.params.restaurantId
-        }
-      })
-      if (!favorite) throw new Error("You haven't favorited this restaurant")
-
-      await favorite.destroy()
-      req.flash('error_messages', 'removeFavorite successfully')
-
-      return res.redirect('back')
-    } catch (error) {
-      next(error)
-    }
+  removeFavorite: (req, res, next) => {
+    userServices.removeFavorite(req, (err, data) => {
+      if (err) return next(err)
+      else {
+        req.flash('error_messages', 'removeFavorite successfully')
+        res.redirect('back', data)
+      }
+    })
   },
   addLike: async (req, res, next) => {
     try {
