@@ -51,15 +51,14 @@ const categoryServices = {
       return callback(error)
     }
   },
-  deleteCategory: async (req, res, next) => { // delete a category from database
+  deleteCategory: async (req, callback) => { // delete a category from database
     try {
-      const category = await Category.findByPk(req.params.cat_id)
+      let category = await Category.findByPk(req.params.cat_id)
       if (category == null) throw new Error("Category didn't exist!")
-      await category.destroy()
-      req.flash('error_messages', 'category delete successfully')
-      return res.redirect('/admin/categories')
+      category = await category.destroy()
+      return callback(null, { category })
     } catch (error) {
-      next(error)
+      return callback(error)
     }
   }
 }
