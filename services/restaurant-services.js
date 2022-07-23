@@ -48,6 +48,36 @@ const restaurantServices = {
       return callback(error)
     }
   },
+  getDashboard: async (req, callback) => {
+    try {
+      const restaurant = await Restaurant.findByPk(req.params.rest_id,
+        {
+          include: [Category],
+          nest: true,
+          raw: true
+        }
+      )
+      if (!restaurant) throw new Error("Restaurant didn't exist!") // didnot find a restaurant
+
+      const comments = await Comment.findAndCountAll(
+        {
+          where: {
+            restaurantId: req.params.rest_id
+          }
+        }
+      )
+
+      return callback(
+        null,
+        {
+          restaurant,
+          commentCounts: comments.count
+        }
+      )
+    } catch (error) {
+      return callback(error)
+    }
+  },
   getFeeds: async (req, callback) => { // render top 10 feeds
     try {
       const [restaurants, comments] = await Promise.all(

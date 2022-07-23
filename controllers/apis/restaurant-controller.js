@@ -4,6 +4,9 @@ const restaurantController = {
   getRestaurants: (req, res, next) => {
     restaurantServices.getRestaurants(req, (error, data) => error ? next(error) : res.json({ status: 'success', data }))
   },
+  getDashboard: (req, res, next) => {
+    restaurantServices.getDashboard(req, (error, data) => error ? next(error) : res.json({ status: 'success', data }))
+  },
   getFeeds: (req, res, next) => { // render top 10 feeds
     restaurantServices.getFeeds(req, (error, data) => error ? next(error) : res.json({ status: 'success', data }))
   },

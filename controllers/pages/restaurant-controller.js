@@ -43,32 +43,13 @@ const restaurantController = {
       next(error)
     }
   },
-  getDashboard: async (req, res, next) => {
-    try {
-      const restaurant = await Restaurant.findByPk(req.params.rest_id,
-        {
-          include: [Category],
-          nest: true,
-          raw: true
-        }
-      )
-      if (!restaurant) throw new Error("Restaurant didn't exist!") // didnot find a restaurant
-
-      const comments = await Comment.findAndCountAll(
-        {
-          where: {
-            restaurantId: req.params.rest_id
-          }
-        }
-      )
-
-      return res.render('dashboard', {
-        restaurant,
-        commentCounts: comments.count
-      })
-    } catch (error) {
-      next(error)
-    }
+  getDashboard: (req, res, next) => {
+    restaurantServices.getDashboard(req, (err, data) => {
+      if (err) return next(err)
+      else {
+        res.render('dashboard', data)
+      }
+    })
   },
   getFeeds: (req, res, next) => { // render top 10 feeds
     restaurantServices.getFeeds(req, (err, data) => {

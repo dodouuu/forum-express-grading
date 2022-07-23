@@ -1,5 +1,4 @@
 const { User, Restaurant, Favorite, Like, Followship } = require('../../models')
-const { imgurFileHandler } = require('../../helpers/file-helpers')
 const userServices = require('../../services/user-services')
 
 const userController = {
