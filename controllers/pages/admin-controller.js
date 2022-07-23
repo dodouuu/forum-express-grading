@@ -34,16 +34,10 @@ const adminController = {
     adminServices.getRestaurants(req, (err, data) => err ? next(err) : res.render('admin/restaurants', data))
   },
   getRestaurant: (req, res, next) => {
-    Restaurant.findByPk(req.params.rest_id, { // find a restaurant by primary key
-      raw: true, // transform to plain object
-      nest: true,
-      include: [Category]
+    adminServices.getRestaurant(req, (err, data) => {
+      if (err) return next(err)
+      res.render('admin/restaurant', data)
     })
-      .then(restaurant => {
-        if (!restaurant) throw new Error("Restaurant didn't exist!") // didnot find a restaurant
-        else res.render('admin/restaurant', { restaurant }) // find a restaurant successfully
-      })
-      .catch(err => next(err))
   },
   createRestaurant: (req, res, next) => { // go to create restaurant page
     return Category.findAll({

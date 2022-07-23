@@ -14,6 +14,19 @@ const adminServices = {
       return callback(error)
     }
   },
+  getRestaurant: async (req, callback) => {
+    try {
+      const restaurant = await Restaurant.findByPk(req.params.rest_id, { // find a restaurant by primary key
+        raw: true, // transform to plain object
+        nest: true,
+        include: [Category]
+      })
+      if (!restaurant) throw new Error("Restaurant didn't exist!") // didnot find a restaurant
+      return callback(null, { restaurant })
+    } catch (error) {
+      return callback(error)
+    }
+  },
   postRestaurant: async (req, callback) => { // post of create restaurant page
     try {
       const { name, tel, address, openingHours, description, categoryId } = req.body
