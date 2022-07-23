@@ -65,31 +65,13 @@ const adminController = {
     })
   },
   putRestaurant: (req, res, next) => { // update a restaurant
-    const { name, tel, address, openingHours, description, categoryId } = req.body
-    if (!name) throw new Error('Restaurant name is required!')
-
-    const { file } = req // = const file = req.file
-    Promise.all([ // 非同步處理
-      Restaurant.findByPk(req.params.rest_id), // 去資料庫查有沒有這間餐廳
-      imgurFileHandler(file) // 把檔案傳到 file-helper 處理
-    ])
-      .then(([restaurant, filePath]) => {
-        if (!restaurant) throw new Error("Restaurant didn't exist!")
-        return restaurant.update({
-          name,
-          tel,
-          address,
-          openingHours,
-          description,
-          image: filePath || restaurant.image,
-          categoryId
-        })
-      })
-      .then(() => {
+    adminServices.putRestaurant(req, (err, data) => {
+      if (err) return next(err)
+      else {
         req.flash('success_messages', 'restaurant was updated successfully')
-        res.redirect('/admin/restaurants')
-      })
-      .catch(err => next(err))
+        res.redirect('/admin/restaurants', data)
+      }
+    })
   }
 }
 module.exports = adminController

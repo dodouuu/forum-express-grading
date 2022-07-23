@@ -69,6 +69,37 @@ const adminServices = {
     } catch (error) {
       return callback(error)
     }
+  },
+  putRestaurant: async (req, callback) => { // update a restaurant
+    try {
+      const { name, tel, address, openingHours, description, categoryId } = req.body
+      if (!name) throw new Error('Restaurant name is required!')
+
+      const { file } = req // = const file = req.file
+
+      let [restaurant, filePath] = await Promise.all([ // 非同步處理
+        Restaurant.findByPk(req.params.rest_id), // 去資料庫查有沒有這間餐廳
+        imgurFileHandler(file) // 把檔案傳到 file-helper 處理
+      ])
+      if (!restaurant) throw new Error("Restaurant didn't exist!")
+      restaurant = await restaurant.update({
+        name,
+        tel,
+        address,
+        openingHours,
+        description,
+        image: filePath || restaurant.image,
+        categoryId
+      })
+      return callback(null,
+        {
+          restaurant
+        }
+      )
+    } catch (error) {
+      return callback(error)
+    }
+        // res.redirect('/admin/restaurants')
   }
 }
 module.exports = adminServices
