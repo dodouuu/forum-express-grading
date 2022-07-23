@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs') // 載入 bcrypt
-const { User, Restaurant, Comment, Favorite } = require('../models')
+const { User, Restaurant, Comment, Favorite, Like } = require('../models')
 const { imgurFileHandler } = require('../helpers/file-helpers')
 
 const userServices = {
@@ -138,6 +138,50 @@ const userServices = {
 
       await favorite.destroy()
 
+      return callback(null, { userId, restaurantId })
+    } catch (error) {
+      return callback(error)
+    }
+  },
+  addLike: async (req, callback) => {
+    try {
+      const { restaurantId } = req.params
+      const userId = req.user.id
+      const [restaurant, like] = await Promise.all([
+        Restaurant.findByPk(restaurantId),
+        Like.findOne({
+          where: {
+            userId,
+            restaurantId
+          }
+        })
+      ])
+
+      if (!restaurant) throw new Error("Restaurant didn't exist!")
+      if (like) throw new Error('You have liked this restaurant!')
+
+      await Like.create({
+        userId: req.user.id,
+        restaurantId
+      })
+      return callback(null, { userId, restaurantId })
+    } catch (error) {
+      return callback(error)
+    }
+  },
+  removeLike: async (req, callback) => {
+    try {
+      const userId = req.user.id
+      const restaurantId = req.params.restaurantId
+      const like = await Like.findOne({
+        where: {
+          userId,
+          restaurantId
+        }
+      })
+      if (!like) throw new Error("You haven't liked this restaurant")
+
+      await like.destroy()
       return callback(null, { userId, restaurantId })
     } catch (error) {
       return callback(error)

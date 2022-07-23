@@ -36,7 +36,6 @@ router.post('/comments', authenticated, commentController.postComment) // create
 
 router.post('/favorite/:restaurantId', authenticated, userController.addFavorite) // add a restaurant into join table
 router.delete('/favorite/:restaurantId', authenticated, userController.removeFavorite) // remove a restaurant from join table
-
 router.post('/like/:restaurantId', authenticated, userController.addLike) // add a restaurant into join table
 router.delete('/like/:restaurantId', authenticated, userController.removeLike) // remove a restaurant from join table
 

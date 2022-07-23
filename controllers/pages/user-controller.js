@@ -1,4 +1,4 @@
-const { User, Restaurant, Favorite, Like, Followship } = require('../../models')
+const { User, Followship } = require('../../models')
 const userServices = require('../../services/user-services')
 
 const userController = {
@@ -63,49 +63,23 @@ const userController = {
       }
     })
   },
-  addLike: async (req, res, next) => {
-    try {
-      const { restaurantId } = req.params
-      const [restaurant, like] = await Promise.all([
-        Restaurant.findByPk(restaurantId),
-        Like.findOne({
-          where: {
-            userId: req.user.id,
-            restaurantId
-          }
-        })
-      ])
-
-      if (!restaurant) throw new Error("Restaurant didn't exist!")
-      if (like) throw new Error('You have liked this restaurant!')
-
-      await Like.create({
-        userId: req.user.id,
-        restaurantId
-      })
-      req.flash('success_messages', 'addLike successfully')
-      return res.redirect('back')
-    } catch (error) {
-      next(error)
-    }
+  addLike: (req, res, next) => {
+    userServices.addLike(req, (err, data) => {
+      if (err) return next(err)
+      else {
+        req.flash('success_messages', 'addLike successfully')
+        res.redirect('back', data)
+      }
+    })
   },
-  removeLike: async (req, res, next) => {
-    try {
-      const like = await Like.findOne({
-        where: {
-          userId: req.user.id,
-          restaurantId: req.params.restaurantId
-        }
-      })
-      if (!like) throw new Error("You haven't liked this restaurant")
-
-      await like.destroy()
-      req.flash('error_messages', 'removeLike successfully')
-
-      return res.redirect('back')
-    } catch (error) {
-      next(error)
-    }
+  removeLike: (req, res, next) => {
+    userServices.removeLike(req, (err, data) => {
+      if (err) return next(err)
+      else {
+        req.flash('error_messages', 'removeLike successfully')
+        res.redirect('back', data)
+      }
+    })
   },
   addFollowing: async (req, res, next) => {
     try {
