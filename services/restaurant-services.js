@@ -1,4 +1,4 @@
-const { Restaurant, Category } = require('../models')
+const { Restaurant, Category, User } = require('../models')
 const { getOffset, getPagination } = require('../helpers/pagination-helper')
 
 const restaurantServices = {
@@ -42,6 +42,34 @@ const restaurantServices = {
           categories,
           categoryId,
           pagination: getPagination(limit, page, restaurants.count)
+        }
+      )
+    } catch (error) {
+      return callback(error)
+    }
+  },
+  getTopRestaurants: async (req, callback) => { // render most favorited top 10 restaurants
+    try {
+      const rests = await Restaurant.findAll({
+        include: [{ model: User, as: 'FavoritedUsers' }]
+      })
+      const result = rests
+        .map(rest => {
+          return (
+            {
+              ...rest.dataValues,
+              favoritedCount: rest.FavoritedUsers.length,
+              isFavorited: req.user !== undefined ? req.user.FavoritedRestaurants.some(r => r.id === rest.id) : false // if this restaurant in req.user.FavoritedRestaurants
+            }
+          )
+        })
+        .sort((a, b) => b.favoritedCount - a.favoritedCount)
+        .slice(0, 10)
+      // return res.render('top-restaurants', { restaurants: result })
+      return callback(
+        null,
+        {
+          restaurants: result
         }
       )
     } catch (error) {

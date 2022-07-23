@@ -23,5 +23,7 @@ router.get('/users/:user_id/edit', authenticated, userController.editUser) // ge
 router.get('/users/:user_id', authenticated, userController.getUser) // get user's data for Profile page
 router.put('/users/:user_id', authenticated, upload.single('image'), userController.putUser) // update Profile
 
+router.get('/restaurants/top', authenticated, restController.getTopRestaurants) // render most favorited top 10 restaurants
+
 router.use('/', apiErrorHandler)
 module.exports = router

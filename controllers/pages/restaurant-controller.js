@@ -99,27 +99,13 @@ const restaurantController = {
       next(error)
     }
   },
-  getTopRestaurants: async (req, res, next) => { // render most favorited top 10 restaurants
-    try {
-      const rests = await Restaurant.findAll({
-        include: [{ model: User, as: 'FavoritedUsers' }]
-      })
-      const result = rests
-        .map(rest => {
-          return (
-            {
-              ...rest.dataValues,
-              favoritedCount: rest.FavoritedUsers.length,
-              isFavorited: req.user !== undefined ? req.user.FavoritedRestaurants.some(r => r.id === rest.id) : false // if this restaurant in req.user.FavoritedRestaurants
-            }
-          )
-        })
-        .sort((a, b) => b.favoritedCount - a.favoritedCount)
-        .slice(0, 10)
-      return res.render('top-restaurants', { restaurants: result })
-    } catch (error) {
-      next(error)
-    }
+  getTopRestaurants: (req, res, next) => { // render most favorited top 10 restaurants
+    restaurantServices.getTopRestaurants(req, (err, data) => {
+      if (err) return next(err)
+      else {
+        res.render('top-restaurants', data)
+      }
+    })
   }
 }
 module.exports = restaurantController
