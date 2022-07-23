@@ -26,6 +26,7 @@ router.put('/users/:user_id', authenticated, upload.single('image'), userControl
 router.get('/restaurants/top', authenticated, restController.getTopRestaurants) // render most favorited top 10 restaurants
 router.get('/restaurants/feeds', authenticated, restController.getFeeds) // render top 10 feeds
 router.get('/restaurants/:rest_id/dashboard', authenticated, restController.getDashboard) // render dashboard of a restaurant
+router.get('/restaurants/:rest_id', authenticated, restController.getRestaurant) // render a restaurant
 
 router.use('/', apiErrorHandler)
 module.exports = router

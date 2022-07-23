@@ -48,6 +48,48 @@ const restaurantServices = {
       return callback(error)
     }
   },
+  getRestaurant: async (req, callback) => {
+    try {
+      const restaurant = await Restaurant.findByPk(req.params.rest_id,
+        {
+          include: [
+            Category,
+            { model: Comment, include: [User] },
+            { model: User, as: 'FavoritedUsers' },
+            { model: User, as: 'LikedUsers' }
+          ],
+          nest: true
+        }
+      )
+      if (!restaurant) throw new Error("Restaurant didn't exist!") // didnot find a restaurant
+
+      const comments = await Comment.findAll(
+        {
+          include: [User],
+          where: { restaurantId: restaurant.id },
+          order: [
+            ['createdAt', 'DESC']
+          ],
+          raw: true,
+          nest: true
+        }
+      )
+
+      await restaurant.increment('viewCounts', { by: 1 })
+
+      return callback(
+        null,
+        {
+          restaurant: restaurant.toJSON(),
+          comments,
+          isFavorited: restaurant.FavoritedUsers.some(fu => fu.id === req.user.id),
+          isLiked: restaurant.LikedUsers.some(lu => lu.id === req.user.id)
+        }
+      )
+    } catch (error) {
+      return callback(error)
+    }
+  },
   getDashboard: async (req, callback) => {
     try {
       const restaurant = await Restaurant.findByPk(req.params.rest_id,
